@@ -1,6 +1,6 @@
 # A Project Management Site with GraphQL
 
-# Dependencies
+# Dependencies (backend)
 
 - express
 - express-graphql
@@ -9,7 +9,15 @@
 - cors
 - colors
 
-# Dev dependencies
+# Dev dependencies (backend)
 
 - nodemon
 - dotenv
+
+# Dependencies (frontend)
+
+- @apollo/client
+- graphql
+- react-router-dom
+- react-icons
+- framer-motion
