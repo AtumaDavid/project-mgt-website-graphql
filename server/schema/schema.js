@@ -101,13 +101,47 @@ const myMutation = new GraphQLObjectType({
     },
 
     // delete client
+    // deleteClient: {
+    //   type: ClientType,
+    //   args: {
+    //     id: { type: GraphQLNonNull(GraphQLID) },
+    //   },
+    //   resolve(parent, args) {
+    //     Project.find({ clientId: args.id }).then((projects) => {
+    //       projects.forEach((project) => {
+    //         project.deleteOne();
+    //       });
+    //     });
+
+    //     return Client.findByIdAndDelete(args.id);
+    //   },
+    // },
+    // delete client
     deleteClient: {
       type: ClientType,
       args: {
         id: { type: GraphQLNonNull(GraphQLID) },
       },
-      resolve(parent, args) {
-        return Client.findByIdAndDelete(args.id);
+      async resolve(parent, args) {
+        try {
+          // Fetch projects with the specified clientId
+          const projects = await Project.find({ clientId: args.id });
+
+          // Delete each project
+          await Promise.all(
+            projects.map(async (project) => {
+              await project.deleteOne();
+            })
+          );
+
+          // Delete the client
+          const deletedClient = await Client.findByIdAndDelete(args.id);
+
+          return deletedClient;
+        } catch (error) {
+          console.error(error);
+          throw new Error("Error deleting client and associated projects");
+        }
       },
     },
 
@@ -148,7 +182,7 @@ const myMutation = new GraphQLObjectType({
         id: { type: GraphQLNonNull(GraphQLID) },
       },
       resolve(parent, args) {
-        return Client.findByIdAndDelete(args.id);
+        return Project.findByIdAndDelete(args.id);
       },
     },
 
